@@ -81,6 +81,16 @@ LEGAL_KNOWLEDGE = [
             "public interest (Winter v. Natural Resources Defense Council, 2008)."
         ),
     },
+    {
+        "id": "labor_law",
+        "keywords": ["lao động", "sa thải", "hợp đồng lao động", "labor", "termination"],
+        "text": (
+            "Theo Bộ luật Lao động Việt Nam 2019, người sử dụng lao động có thể đơn phương "
+            "chấm dứt hợp đồng trong một số trường hợp như người lao động thường xuyên không "
+            "hoàn thành công việc, ốm đau hoặc tai nạn đã điều trị dài ngày chưa khỏi, thiên tai "
+            "hoặc hỏa hoạn buộc phải thu hẹp sản xuất, hoặc người lao động đủ tuổi nghỉ hưu."
+        ),
+    },
 ]
 
 
@@ -135,7 +145,22 @@ def calculate_damages(breach_type: str, contract_value: float) -> str:
     )
 
 
-TOOLS = [search_legal_database, calculate_damages]
+@tool
+def check_statute_of_limitations(case_type: str) -> str:
+    """Check the statute of limitations for a case type.
+
+    Args:
+        case_type: Case type such as contract, tort, or property.
+    """
+    limits = {
+        "contract": "4 years (UCC § 2-725)",
+        "tort": "2-3 years depending on the state",
+        "property": "5 years",
+    }
+    return limits.get(case_type.lower(), "Unknown statute of limitations")
+
+
+TOOLS = [search_legal_database, calculate_damages, check_statute_of_limitations]
 
 QUESTION = "What are the legal consequences if a company breaches a non-disclosure agreement?"
 
@@ -146,7 +171,7 @@ async def main():
     print("=" * 70)
     print()
     print("[How it works]")
-    print("  1. LLM receives tools (search_legal_database, calculate_damages)")
+    print("  1. LLM receives tools (search_legal_database, calculate_damages, statute checker)")
     print("  2. LLM decides which tools to call and with what arguments")
     print("  3. We execute the tools and feed results back to the LLM")
     print("  4. LLM generates a final answer grounded in retrieved data")

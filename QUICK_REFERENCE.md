@@ -9,7 +9,7 @@ uv sync
 
 # Copy environment file
 cp .env.example .env
-# Sau đó sửa .env, thêm OPENROUTER_API_KEY
+# Sau đó sửa .env, thêm OPENAI_API_KEY
 ```
 
 ### Chạy Stages (Standalone)
